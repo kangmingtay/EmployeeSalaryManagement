@@ -37,10 +37,32 @@ const checkFileType = (file, cb) => {
 // handlers
 async function handleShowAllRequest(req, res) {
     try {
-        const allUsers = await pool.query("SELECT id, login, name, salary FROM users");
-        return res.status(200).json(allUsers.rows);
+        if (Object.keys(req.query).length !== 5) {
+            throw Error("Missing request params");
+        }
+
+        if (Object.values(req.query).includes(undefined)) {
+            throw Error("Invalid request params");
+        }
+
+        const minSalary = req.query.minSalary;
+        const maxSalary = req.query.maxSalary;
+        const offset = req.query.offset;
+        const limit = req.query.limit;
+        const sortOrder = req.query.sort[0] === "-" ? "DESC" : "ASC";
+        const sortCategory = req.query.sort.slice(1);
+
+        const query = `SELECT id, login, name, salary FROM users 
+            WHERE salary > ${minSalary} AND salary < ${maxSalary}
+            ORDER BY ${sortCategory} ${sortOrder} 
+            OFFSET ${offset} 
+            LIMIT ${limit}`;
+
+        const allUsers = await pool.query(query);
+        const resp = { results: allUsers.rows }
+        return res.status(200).json(resp);
     } catch(err) {
-        return res.status(404).send({
+        return res.status(400).send({
             success: false,
             message: err.message,
         })
@@ -90,11 +112,11 @@ async function handleUpdateRequest(res, fileData) {
                     const plogin = res.rows[0].login;
 
                     // swap logins here
-                    console.log(tid, plogin);
+                    // console.log(tid, plogin);
                     res = await client.query(updateLogin, [tid, `tmp${plogin}`]);
-                    console.log(pid, tlogin);
+                    // console.log(pid, tlogin);
                     res = await client.query(updateLogin, [pid, tlogin]);
-                    console.log(tid, plogin);
+                    // console.log(tid, plogin);
                     res = await client.query(updateLogin, [tid, plogin]);
                 } else {
                     return
