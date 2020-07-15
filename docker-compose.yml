@@ -1,5 +1,18 @@
 version: '3.4'
 services:
+    app:
+        build:
+            context: .
+            dockerfile: ./build/Dockerfile.app
+        depends_on: 
+            - db
+        env_file: 
+            - ./server/.env
+        ports:
+            - "8888:3000"
+        volumes:
+            - ./server:/app
+            - /app/node_modules  
     db:
         image: postgres:11
         ports:
