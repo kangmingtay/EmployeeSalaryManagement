@@ -4,8 +4,6 @@ EXPOSE 8888
 
 WORKDIR /app
 
-COPY ./server/ /app
+COPY ./server/package.json /app
 
 RUN ["npm", "install"]
-
-ENTRYPOINT ["npm", "start"]
