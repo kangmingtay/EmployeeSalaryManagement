@@ -32,16 +32,18 @@ const EmployeePage = (props) => {
         value: 'name',
     });
 
-    const pageLimit = 5;
+    const pageLimit = 30;
 
     const fetchData = async (page, salary, order) => {
-        
         const offset = pageLimit * page;
         const sortString = order.direction + order.value;
+        const minSalary = (salary.min >= 0) ? salary.min : 0
+        const maxSalary = (salary.max >= 0) ? salary.max : 0
+
         const resp = await axios.get(api.getEmployeesList, {
             params: {
-                minSalary: salary.min,
-                maxSalary: salary.max,
+                minSalary: minSalary,
+                maxSalary: maxSalary,
                 offset: offset,
                 limit: pageLimit,
                 sort: sortString,
@@ -55,8 +57,14 @@ const EmployeePage = (props) => {
     }, []);
 
     const handleSalaryFilter = (event) => {
-        event.preventDefault();
-
+        const newSalary = {...salary};
+        if (event.target.id === 'min') {
+            newSalary.min = Number(event.target.value);
+        } else {
+            newSalary.max = Number(event.target.value);
+        }
+        fetchData(page, newSalary, order);
+        setSalary(newSalary)
     }
 
     const handleSortBy = (event) => {
@@ -74,27 +82,39 @@ const EmployeePage = (props) => {
     const handleNextPage = () => {
         fetchData(page+1, salary, order);
         setPage(page+1);
-        console.log(data)
     }
 
     const handlePrevPage = () => {
         fetchData(page-1, salary, order);
         setPage(page-1);
-        console.log(data)
     }
 
     return (
         <Grid className={classes.root} container spacing={2}>
             <Grid container xs={4}>
-                <TextField id="outlined-basic" label="Min Salary" variant="outlined" value={salary.min}/>
+                <TextField 
+                    id="min" 
+                    label="Min Salary" 
+                    variant="outlined" 
+                    defaultValue={salary.min}
+                    onChange={handleSalaryFilter}
+                    error={(Number(salary.min) >= 0) ? false : true}
+                />
             </Grid>
             <Grid container xs={4}>
-                <TextField id="outlined-basic" label="Max Salary" variant="outlined" value={salary.max} />
+                <TextField 
+                    id="max" 
+                    label="Max Salary" 
+                    variant="outlined" 
+                    defaultValue={salary.max} 
+                    onChange={handleSalaryFilter}
+                    error={(Number(salary.max) >= 0) ? false : true}
+                />
             </Grid>
             <Grid container xs={4}>
                 <TextField 
                     select 
-                    id="outlined-basic" 
+                    id="column" 
                     label="Sort by column" 
                     variant="outlined"
                     value={order.value}
@@ -110,7 +130,7 @@ const EmployeePage = (props) => {
             <Grid container xs={4}>
                 <TextField 
                     select 
-                    id="outlined-basic" 
+                    id="direction" 
                     label="Sort by direction" 
                     variant="outlined"
                     value={order.direction}
