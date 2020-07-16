@@ -16,14 +16,14 @@ const columns = [
     {id: 'salary', label: 'Salary'},
 ];
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
     root: {
         width: '100%',
     },
-    container: {
-        maxHeight: 440,
-    },
-});
+    header: {
+        backgroundColor: theme.palette.grey[200],
+    }
+}));
 
 const tableContent = (rows) => {
     if (rows.length !== 0) {
@@ -53,7 +53,7 @@ const EmployeeTable = (props) => {
         <TableContainer component={Paper}>
             <Table className={classes.table} aria-label="customized table">
                 <TableHead>
-                    <TableRow>
+                    <TableRow className={classes.header}>
                         {columns.map(item => {
                             return <TableCell key={item.id}>{item.label}</TableCell>
                         })}
