@@ -18,19 +18,11 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use('/api/users', usersRouter);
+app.use('/users', usersRouter);
 
 // api routes
 app.get('/', (req, res) => {
     res.send('Techhunt 2020 api');
-});
-
-app.get('/api', (req, res) => {
-    res.status(200).send({
-        success: 'true',
-        message: 'api page',
-        data: [],
-    })
 });
 
 app.listen(port, () => console.log(`Server listening on port ${port}!`))

@@ -25,7 +25,7 @@ const EmployeePage = (props) => {
     const [page, setPage] = useState(0);
     const [salary, setSalary] = useState({
         min: 0,
-        max: 100000,
+        max: 100000000,
     })
     const [order, setOrder] = useState({
         direction: '+',
