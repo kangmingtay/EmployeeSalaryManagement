@@ -16,6 +16,7 @@ const useStyles = makeStyles((theme) => ({
     textAlign: 'center',
     color: theme.palette.text.secondary,
   },
+  toolbar: theme.mixins.toolbar,
 }));
 
 function App() {
@@ -23,23 +24,23 @@ function App() {
 
   return (
     <Router>
-      <Grid container spacing={3}>
-        <Grid item xs={12}>
+      <Grid container spacing={2} >
+        <Grid item>
           <SideBar/>
         </Grid>
+        <Grid item lg={9} md={8} sm={6}>
+          <div className={classes.toolbar}/>
+          <Switch>
+              <Route exact path="/">
+                  <EmployeeTable/>
+              </Route>
+              <Route exact path="/upload">
+                  Upload CSV File Component
+              </Route>
+            </Switch>
+        </Grid>
+        
       </Grid>
-      <Switch>
-        <Route exact path="/">
-          <Container>
-            <EmployeeTable/>
-          </Container>
-        </Route>
-        <Route exact path="/upload">
-          <Container>
-            Upload CSV File Component
-          </Container>
-        </Route>
-      </Switch>
     </Router>
   );
 }

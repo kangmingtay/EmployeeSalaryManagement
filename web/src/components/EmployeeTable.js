@@ -55,9 +55,6 @@ const EmployeeTable = (props) => {
 
     return (
         <MaterialTable
-            style={{
-                margin: "10px"
-            }}
             title="Employees"
             columns={columns}
             data={data}
