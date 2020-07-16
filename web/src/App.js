@@ -5,7 +5,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import Grid from '@material-ui/core/Grid';
 import Container from '@material-ui/core/Container';
-import EmployeeTable from './components/EmployeeTable';
+import EmployeePage from './pages/EmployeePage';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -32,7 +32,7 @@ function App() {
           <div className={classes.toolbar}/>
           <Switch>
               <Route exact path="/">
-                  <EmployeeTable/>
+                  <EmployeePage/>
               </Route>
               <Route exact path="/upload">
                   Upload CSV File Component

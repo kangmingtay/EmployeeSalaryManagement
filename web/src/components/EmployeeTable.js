@@ -1,101 +1,67 @@
-import React, { useState, useEffect, forwardRef } from 'react';
+import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import MaterialTable from 'material-table';
-import {AddBox, Check, Clear, ChevronLeft, ChevronRight, DeleteOutline, Edit, FirstPage, LastPage, Search }from '@material-ui/icons';
-import axios from 'axios';
-import api from '../api';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import Typography from '@material-ui/core/Typography';
+import Paper from '@material-ui/core/Paper';
 
-const tableIcons = {
-    Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
-    Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
-    Clear: forwardRef((props, ref) => <Clear {...props} ref={ref} />),
-    Delete: forwardRef((props, ref) => <DeleteOutline {...props} ref={ref} />),
-    Edit: forwardRef((props, ref) => <Edit {...props} ref={ref} />),
-    FirstPage: forwardRef((props, ref) => <FirstPage {...props} ref={ref} />),
-    LastPage: forwardRef((props, ref) => <LastPage {...props} ref={ref} />),
-    NextPage: forwardRef((props, ref) => <ChevronRight {...props} ref={ref} />),
-    PreviousPage: forwardRef((props, ref) => <ChevronLeft {...props} ref={ref} />),
-    Search: forwardRef((props, ref) => <Search {...props} ref={ref} />),
+const columns = [
+    {id: 'id', label: 'Employee ID'},
+    {id: 'name', label: 'Name'},
+    {id: 'login', label: 'Login'},
+    {id: 'salary', label: 'Salary'},
+];
+
+const useStyles = makeStyles({
+    root: {
+        width: '100%',
+    },
+    container: {
+        maxHeight: 440,
+    },
+});
+
+const tableContent = (rows) => {
+    if (rows.length !== 0) {
+        return (
+            <TableBody>
+                {rows.map(item => {
+                    return (
+                        <TableRow key={item.id} hover>
+                            <TableCell>{item.id}</TableCell>
+                            <TableCell>{item.login}</TableCell>
+                            <TableCell>{item.name}</TableCell>
+                            <TableCell>{item.salary}</TableCell>
+                        </TableRow>
+                    )
+                })}
+            </TableBody>
+        )
+    } else {
+        return <Typography align='left' h3>No more items left to fetch</Typography>
+    }
 }
 
 const EmployeeTable = (props) => {
-    const [columns, setColumns] = useState([
-        {title: 'Employee ID', field: 'id', defaultSort: 'asc'},
-        {title: 'Name', field: 'name', defaultSort: 'asc'},
-        {title: 'Login', field: 'login', defaultSort: 'asc'},
-        {
-            title: 'Salary', 
-            field: 'salary',
-            defaultSort: 'asc',
-            customSort: (a, b) => {
-                return Number(a.salary) - Number(b.salary);
-            }
-        },
-    ]);
-
-    const [data, setData] = useState([]);
-
-    useEffect(() => {
-        const fetchData = async() => {
-            const resp = await axios.get(api.getEmployeesList, {
-                params: {
-                    minSalary: 0,
-                    maxSalary: 100000,
-                    offset: 0,
-                    limit: 30,
-                    sort: "+name",
-                }
-            });
-            console.log(resp.data.results)
-            setData([...resp.data.results]);
-        }
-        fetchData();
-    }, [])
-
+    const classes = useStyles();
 
     return (
-        <MaterialTable
-            title="Employees"
-            columns={columns}
-            data={data}
-            icons={tableIcons}
-            options={{
-                pageSize: 5,
-                pageSizeOptions: []
-            }}
-            editable={{
-                onRowAdd: newData =>
-                new Promise((resolve, reject) => {
-                    setTimeout(() => {
-                    setData([...data, newData]);
-                    
-                    resolve();
-                    }, 1000)
-                }),
-                onRowUpdate: (newData, oldData) =>
-                new Promise((resolve, reject) => {
-                    setTimeout(() => {
-                    const dataUpdate = [...data];
-                    const index = oldData.tableData.id;
-                    dataUpdate[index] = newData;
-                    setData([...dataUpdate]);
-
-                    resolve();
-                    }, 1000)
-                }),
-                onRowDelete: oldData =>
-                new Promise((resolve, reject) => {
-                    setTimeout(() => {
-                    const dataDelete = [...data];
-                    const index = oldData.tableData.id;
-                    dataDelete.splice(index, 1);
-                    setData([...dataDelete]);
-                    
-                    resolve()
-                    }, 1000)
-                }),
-            }}
-        />
+        <TableContainer component={Paper}>
+            <Table className={classes.table} aria-label="customized table">
+                <TableHead>
+                    <TableRow>
+                        {columns.map(item => {
+                            return <TableCell key={item.id}>{item.label}</TableCell>
+                        })}
+                    </TableRow>
+                </TableHead>
+                {tableContent(props.rows)}
+            </Table>
+        </TableContainer>
     )
 }
 
