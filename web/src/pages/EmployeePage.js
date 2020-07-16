@@ -91,7 +91,7 @@ const EmployeePage = (props) => {
 
     return (
         <Grid className={classes.root} container spacing={2}>
-            <Grid container xs={4}>
+            <Grid container xs={3}>
                 <TextField 
                     id="min" 
                     label="Min Salary" 
@@ -101,7 +101,7 @@ const EmployeePage = (props) => {
                     error={(Number(salary.min) >= 0) ? false : true}
                 />
             </Grid>
-            <Grid container xs={4}>
+            <Grid container xs={3}>
                 <TextField 
                     id="max" 
                     label="Max Salary" 
@@ -111,7 +111,7 @@ const EmployeePage = (props) => {
                     error={(Number(salary.max) >= 0) ? false : true}
                 />
             </Grid>
-            <Grid container xs={4}>
+            <Grid container xs={3}>
                 <TextField 
                     select 
                     id="column" 
@@ -127,7 +127,7 @@ const EmployeePage = (props) => {
                     ))}
                 </TextField>
             </Grid>
-            <Grid container xs={4}>
+            <Grid container xs={3}>
                 <TextField 
                     select 
                     id="direction" 
@@ -143,14 +143,14 @@ const EmployeePage = (props) => {
                     ))}
                 </TextField>
             </Grid>
-            <Grid item xs={12}>
-                <EmployeeTable rows={data}/>
-            </Grid>
             <Grid container xs={6}>
                 <Button disabled={(page === 0) ? true : false} onClick={handlePrevPage}>Previous Page</Button>
             </Grid>
             <Grid container xs={6} alignItems='flex-start' justify='flex-end' direction='row'>
                 <Button disabled={(data.length === 0) ? true : false} onClick={handleNextPage}>Next Page</Button>
+            </Grid>
+            <Grid item xs={12}>
+                <EmployeeTable rows={data}/>
             </Grid>
         </Grid>
     )
