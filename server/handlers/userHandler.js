@@ -53,7 +53,7 @@ async function handleShowAllRequest(req, res) {
         const sortCategory = req.query.sort.slice(1);
 
         const query = `SELECT id, login, name, salary FROM users 
-            WHERE salary > ${minSalary} AND salary < ${maxSalary}
+            WHERE salary >= ${minSalary} AND salary <= ${maxSalary}
             ORDER BY ${sortCategory} ${sortOrder} 
             OFFSET ${offset} 
             LIMIT ${limit}`;
