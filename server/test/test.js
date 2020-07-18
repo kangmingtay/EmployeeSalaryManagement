@@ -53,7 +53,7 @@ describe('Users API', () => {
     /**
      * Test POST upload file success
      */
-    describe("POST /users/update", () => {
+    describe("POST /users/upload", () => {
         afterEach((done) => {
             pool.query("TRUNCATE TABLE users", (err, result) => {
                 done();
@@ -74,7 +74,7 @@ describe('Users API', () => {
             })
         })
         it("Error No csv file upload", (done) => {
-            chai.request(server).post("/users/update").type('multipart/form-data').end((err, res) => {
+            chai.request(server).post("/users/upload").type('multipart/form-data').end((err, res) => {
                 res.should.have.status(200);
                 res.body.should.be.a('object');
                 res.body.message.should.be.eq("No file uploaded");
@@ -82,7 +82,7 @@ describe('Users API', () => {
             })
         });
         it("Error Upload empty csv file", (done) => {
-            chai.request(server).post("/users/update")
+            chai.request(server).post("/users/upload")
                 .type('multipart/form-data')
                 .attach('file', fs.readFileSync('./test/test_empty.csv'), 'test_empty.csv')
                 .end((err, res) => {
@@ -93,7 +93,7 @@ describe('Users API', () => {
                 })
         });
         it("Negative salary", (done) => {
-            chai.request(server).post("/users/update")
+            chai.request(server).post("/users/upload")
                 .type('multipart/form-data')
                 .attach('file', fs.readFileSync('./test/test_salary.csv'), 'test.csv')
                 .end((err, res) => {
@@ -104,7 +104,7 @@ describe('Users API', () => {
                 })
         });
         it("Error Upload csv file with non-unique logins", (done) => {
-            chai.request(server).post("/users/update")
+            chai.request(server).post("/users/upload")
                 .type('multipart/form-data')
                 .attach('file', fs.readFileSync('./test/test_login.csv'), 'test.csv')
                 .end((err, res) => {
@@ -115,7 +115,7 @@ describe('Users API', () => {
                 })
         });
         it("Upload csv file success", (done) => {
-            chai.request(server).post("/users/update")
+            chai.request(server).post("/users/upload")
                 .type('multipart/form-data')
                 .attach('file', fs.readFileSync('./test/test_success.csv'), 'test.csv')
                 .end((err, res) => {

@@ -6,6 +6,67 @@ const unlinkAsync = require("../utils").unlinkAsync;
 const handleUpdateError = require("../utils").handleUpdateError;
 
 // handlers
+async function handleShowRequest(req, res) {
+    try {
+        const { id, name, login, salary } = req.body;
+        const query = `SELECT id, login, name, salary FROM users 
+            WHERE id = '${id}' AND name = '${name}' AND login = '${login}' AND salary = '${salary}'`
+        const singleUser = await pool.query(query);
+        if (singleUser.rows.length === 0) {
+            throw Error(`User ${req.params.id} does not exist!`);
+        }
+        const resp = { results: singleUser.rows };
+        return res.status(200).json(resp);
+    } catch (err) {
+        return res.status(400).send({
+            success: false,
+            message: err.message,
+        })
+    }
+
+}
+async function handleEditRequest(req, res) {
+    try {
+        console.log(req.body)
+        const values = Object.values(req.body);
+        const query = `UPDATE users SET name = $2, login = $3, salary = $4 WHERE id = $1`
+
+        const updateUser = await pool.query(query, values);
+        if (updateUser.rowCount === 0) {
+            throw Error(`User ${req.params.id} does not exist!`);
+        }
+        return res.status(200).json({
+            results: `User updated successfully!`,
+            rowCount: updateUser.rowCount
+        });
+    } catch (err) {
+        return res.status(400).send({
+            success: false,
+            message: err.message,
+        })
+    }
+}
+
+async function handleDeleteRequest(req, res) {
+    try {
+        console.log(req.params)
+        const query = `DELETE from users WHERE id = '${req.params.id}'`
+        const deletedUser = await pool.query(query);
+        if (deletedUser.rowCount === 0) {
+            throw Error(`User ${req.params.id} does not exist!`);
+        }
+        return res.status(200).json({ 
+            message: `User ${req.params.id} has been deleted successfully!`,
+            rowCount: deletedUser.rowCount
+        });
+    } catch (err) {
+        return res.status(400).send({
+            success: false,
+            message: err.message,
+        })
+    }
+}
+
 async function handleShowAllRequest(req, res) {
     try {
         if (Object.keys(req.query).length !== 5) {
@@ -139,6 +200,9 @@ async function handleUploadFileRequest(req, res) {
 };
 
 module.exports = {
+    handleShowRequest,
     handleShowAllRequest,
+    handleEditRequest,
+    handleDeleteRequest,
     handleUploadFileRequest,
 }
