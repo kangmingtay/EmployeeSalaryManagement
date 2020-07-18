@@ -6,9 +6,11 @@ const { promisify } = require('util');
 const pool = require("../db");
 const e = require('express');
 
+const fileUploadPath = (process.env.NODE_ENV === 'test') ? './test/public/uploads': './public/uploads';
+
 // Set storage engine
 const storage = multer.diskStorage({
-    destination: './public/uploads',
+    destination: fileUploadPath,
     filename: (req, file, cb) => {
         cb(null, `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`);
     }
@@ -96,7 +98,6 @@ async function handleUpdateRequest(res, fileData) {
             const row = fileData[i]
             const values = Object.values(row);
             const [id, login, name, salary] = values
-
             if (salary < 0) {
                 throw Error("Salary cannot be negative!");
             }
