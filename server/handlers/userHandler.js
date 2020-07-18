@@ -1,40 +1,9 @@
-const multer = require('multer');
-const path = require('path');
 const csv = require('csv-parser');
 const fs = require('fs');
-const { promisify } = require('util');
 const pool = require("../db");
-const e = require('express');
-
-const fileUploadPath = (process.env.NODE_ENV === 'test') ? './test/public/uploads': './public/uploads';
-
-// Set storage engine
-const storage = multer.diskStorage({
-    destination: fileUploadPath,
-    filename: (req, file, cb) => {
-        cb(null, `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`);
-    }
-});
-const upload = multer({ 
-    storage: storage,
-    limits:{filesize: 1000000},
-    fileFilter: (req, file, cb) => {
-        checkFileType(file, cb);
-    }
-}).single('file');
-
-// check file type to allow only csv
-const checkFileType = (file, cb) => {
-    const filetypes = /csv/;
-    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-    const mimetype = filetypes.test(file.mimetype);
-
-    if (extname && mimetype) {
-        return cb(null, true);
-    } else {
-        cb('Error: Csv files only!');
-    }
-}
+const upload = require("../utils").upload;
+const unlinkAsync = require("../utils").unlinkAsync;
+const handleUpdateError = require("../utils").handleUpdateError;
 
 // handlers
 async function handleShowAllRequest(req, res) {
@@ -70,16 +39,6 @@ async function handleShowAllRequest(req, res) {
         })
     }
 };
-
-// remove file 
-const unlinkAsync = promisify(fs.unlink);
-
-const handleUpdateError = (res, err) => {
-    return res.status(200).send({
-        success: false,
-        message: err.message,
-    });
-}
 
 async function handleUpdateRequest(res, fileData) {
     const upsertQuery = `INSERT INTO users (id, login, name, salary) 
