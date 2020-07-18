@@ -158,6 +158,7 @@ async function handleUploadFileRequest(req, res) {
             fs.createReadStream(`${req.file.path}`).pipe(csv({
                 headers: ["id", "login", "name", "salary"],
                 skipComments: true, 
+                skipLines: 1,   // ignore header
                 strict: true,  // number of columns in each row must match number of headers
             })).on('error', async (err) => {
                 // catches incorrect number of columns
