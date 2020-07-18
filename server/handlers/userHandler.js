@@ -91,46 +91,47 @@ async function handleUpdateRequest(res, fileData) {
 
     const client = await pool.connect();
     try {
-        let errors = [];
         await client.query("BEGIN");
-        fileData.forEach(async row => {
+        for (i in fileData) {
+            const row = fileData[i]
             const values = Object.values(row);
+            const [id, login, name, salary] = values
 
-            if (values[3] < 0) errors.push(Error("Salary cannot be negative!"));
-
+            if (salary < 0) {
+                throw Error("Salary cannot be negative!");
+            }
             let res = await client.query(updateNameSalary, values);
-            res = await client.query(getLoginConflict, [values[1]]);
+            res = await client.query(getLoginConflict, [login]);
 
             const affectedRows = res.rows;
             if (affectedRows.length !== 0) {
-
                 const tid = affectedRows[0].id;
                 const tlogin = affectedRows[0].login;
-                const pid = values[0];
+                const pid = id;
                 if (pid !== tid) {
                     res = await client.query(getPreviousLogin, [pid]);
-                    const plogin = res.rows[0].login;
-
-                    // swap logins here
-                    // console.log(tid, plogin);
-                    res = await client.query(updateLogin, [tid, `tmp${plogin}`]);
-                    // console.log(pid, tlogin);
-                    res = await client.query(updateLogin, [pid, tlogin]);
-                    // console.log(tid, plogin);
-                    res = await client.query(updateLogin, [tid, plogin]);
-                } else {
-                    return
+                    if (res.rows.length === 0) {
+                        throw Error(`${pid} is a new entry so login must be unique!`);
+                    } else {
+                        const plogin = res.rows[0].login;
+                        // swap logins here
+                        // console.log(tid, plogin);
+                        res = await client.query(updateLogin, [tid, `tmp${plogin}`]);
+                        // console.log(pid, tlogin);
+                        res = await client.query(updateLogin, [pid, tlogin]);
+                        // console.log(tid, plogin);
+                        res = await client.query(updateLogin, [tid, plogin]);
+                    }
                 }
             } else {
                 res = await client.query(upsertQuery, values);
             }
-        });
-        if (errors.length !== 0) {
-            errors.forEach(err => {
-                throw err;
-            });
-        }
+        };
         await client.query("COMMIT");
+        res.status(200).send({
+            success: true,
+            message: "Database updated!",
+        });
     } catch (err) {
         console.log("Rolling back...");
         await client.query("ROLLBACK");
@@ -140,17 +141,12 @@ async function handleUpdateRequest(res, fileData) {
         });
     } finally {
         client.release();
-        res.status(200).send({
-            success: true,
-            message: "Database updated!",
-        });
     }
 }
 
 async function handleUploadFileRequest(req, res) {
     let fileData = [];
     upload(req, res, async (err) => {
-        console.log(req.file)
         if (req.file === undefined) {
             handleUpdateError(res, Error("No file uploaded"));
         } else if(err) {
