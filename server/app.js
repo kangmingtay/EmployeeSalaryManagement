@@ -25,4 +25,12 @@ app.get('/', (req, res) => {
     res.send('Techhunt 2020 api');
 });
 
-app.listen(port, () => console.log(`Server listening on port ${port}!`))
+if (process.env.NODE_ENV === 'development') {
+    console.log("Setting up dev environment...")
+    app.listen(port, () => console.log(`Server listening on port ${port}!`));    
+} else {
+    console.log("Setting up test environment...")
+    app.listen(8000, () => console.log(`Server listening on port 8000!`));
+}
+
+module.exports = app;
