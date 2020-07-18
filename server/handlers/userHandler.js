@@ -25,10 +25,38 @@ async function handleShowRequest(req, res) {
     }
 
 }
+async function handleCreateRequest(req, res) {
+    try {
+        const values = Object.values(req.body);
+        const {id, name, login, salary} = req.body;
+        
+        if (parseInt(salary) < 0) {
+            throw Error("Salary cannot be negative!");
+        }
+
+        const query = `INSERT into users (id, name, login, salary) VALUES ($1, $2, $3, $4)`;
+        const createUser = await pool.query(query, values);
+        
+        return res.status(200).json({
+            results: `User created successfully!`,
+            rowCount: createUser.rowCount
+        });
+    } catch (err) {
+        return res.status(400).send({
+            success: false,
+            message: err.message,
+        })
+    }
+}
+
 async function handleEditRequest(req, res) {
     try {
-        console.log(req.body)
         const values = Object.values(req.body);
+        const {id, name, login, salary} = req.body;
+        
+        if (parseInt(salary) < 0) {
+            throw Error("Salary cannot be negative!");
+        }
         const query = `UPDATE users SET name = $2, login = $3, salary = $4 WHERE id = $1`
 
         const updateUser = await pool.query(query, values);
@@ -49,7 +77,6 @@ async function handleEditRequest(req, res) {
 
 async function handleDeleteRequest(req, res) {
     try {
-        console.log(req.params)
         const query = `DELETE from users WHERE id = '${req.params.id}'`
         const deletedUser = await pool.query(query);
         if (deletedUser.rowCount === 0) {
@@ -202,6 +229,7 @@ async function handleUploadFileRequest(req, res) {
 module.exports = {
     handleShowRequest,
     handleShowAllRequest,
+    handleCreateRequest,
     handleEditRequest,
     handleDeleteRequest,
     handleUploadFileRequest,
