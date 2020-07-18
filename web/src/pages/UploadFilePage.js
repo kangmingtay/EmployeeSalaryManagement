@@ -27,7 +27,7 @@ const UploadFilePage = (props) => {
                     throw new Error("Wrong file type! Only CSV files are allowed!");
                 }
                 const formData = new FormData();
-                formData.append('csvfile', file)
+                formData.append('file', file)
                 const res = await axios.post(api.uploadFile, formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'

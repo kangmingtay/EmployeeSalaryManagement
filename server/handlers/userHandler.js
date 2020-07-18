@@ -19,7 +19,7 @@ const upload = multer({
     fileFilter: (req, file, cb) => {
         checkFileType(file, cb);
     }
-}).single('csvfile');
+}).single('file');
 
 // check file type to allow only csv
 const checkFileType = (file, cb) => {
