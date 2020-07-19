@@ -14,7 +14,7 @@ const columns = [
     {id: 'login', label: 'Login'},
     {id: 'name', label: 'Name'},
     {id: 'salary', label: 'Salary'},
-    {id: 'actions', label: 'Actions'}
+    // {id: 'actions', label: 'Actions'}
 ];
 
 const useStyles = makeStyles((theme) => ({
