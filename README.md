@@ -8,7 +8,7 @@
 
 ## Set up test environment
 1. Run `docker-compose up testdb` in the root directory to start the test database.
-2. Run `npm run test` in the root directory to run all unit tests. 
+2. Run `cd server && npm install && npm run test` in the root directory to run all unit tests. 
 
 
 ## Assumptions
