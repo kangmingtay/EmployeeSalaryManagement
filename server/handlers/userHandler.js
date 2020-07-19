@@ -27,8 +27,11 @@ async function handleShowRequest(req, res) {
 }
 async function handleCreateRequest(req, res) {
     try {
-        const values = Object.values(req.body);
-        const {id, name, login, salary} = req.body;
+        const id = req.body.id
+        const login = req.body.login
+        const name = req.body.name
+        const salary = req.body.salary
+        const values = [id, name, login, salary]
         
         if (parseInt(salary) < 0) {
             throw Error("Salary cannot be negative!");
@@ -51,8 +54,11 @@ async function handleCreateRequest(req, res) {
 
 async function handleEditRequest(req, res) {
     try {
-        const values = Object.values(req.body);
-        const {id, name, login, salary} = req.body;
+        const id = req.body.id
+        const login = req.body.login
+        const name = req.body.name
+        const salary = req.body.salary
+        const values = [id, name, login, salary]
         
         if (parseInt(salary) < 0) {
             throw Error("Salary cannot be negative!");

@@ -11,9 +11,10 @@ import Paper from '@material-ui/core/Paper';
 
 const columns = [
     {id: 'id', label: 'Employee ID'},
-    {id: 'name', label: 'Name'},
     {id: 'login', label: 'Login'},
+    {id: 'name', label: 'Name'},
     {id: 'salary', label: 'Salary'},
+    {id: 'actions', label: 'Actions'}
 ];
 
 const useStyles = makeStyles((theme) => ({
