@@ -15,5 +15,17 @@
 1. CSV File will always contain a header
 2. Uploading a file that contains a new id but existing login will result in an error.
 3. Uploading a file that contains an existing id with a different but existing login will result in a swap of logins between the 2 affected rows in the table.
-   
+4. Default settings for min and max salary on the front end are 0 and 100000000 respectively.
+5. id, login and name field can have a max length of up to 100 characters while salary has a precision of 10 and a scale of 2.
+
+## Completed Tasks
+1. User Story #1
+2. User Story #2
+3. User Story #3 (backend CRUD endpoints & responsive web app)
+
+## Design 
+![Software architecture](images/architecture.png)
+
+
+
 
