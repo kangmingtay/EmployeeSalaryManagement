@@ -21,7 +21,9 @@
 ## Completed Tasks
 1. User Story #1
 2. User Story #2
-3. User Story #3 (backend CRUD endpoints & responsive web app)
+3. User Story #3 (backend CRUD endpoints & responsive web app) 
+   
+*Update: Added edit & delete actions to the front-end
 
 ## Design 
 ![Software architecture](images/architecture.png)
