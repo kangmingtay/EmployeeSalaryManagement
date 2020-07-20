@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -8,13 +8,19 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
+import EditModal from './EditModal';
+import DeleteModal from './DeleteModal';
+
+import EditIcon from '@material-ui/icons/Edit';
+import DeleteIcon from '@material-ui/icons/Delete';
+import IconButton from '@material-ui/core/IconButton';
 
 const columns = [
     {id: 'id', label: 'Employee ID'},
     {id: 'login', label: 'Login'},
     {id: 'name', label: 'Name'},
     {id: 'salary', label: 'Salary'},
-    // {id: 'actions', label: 'Actions'}
+    {id: 'actions', label: 'Actions'}
 ];
 
 const useStyles = makeStyles((theme) => ({
@@ -23,32 +29,59 @@ const useStyles = makeStyles((theme) => ({
     },
     header: {
         backgroundColor: theme.palette.grey[200],
+    }, 
+    cell: {
+        align: 'center',
     }
 }));
 
-const tableContent = (rows) => {
-    if (rows.length !== 0) {
-        return (
-            <TableBody>
-                {rows.map(item => {
-                    return (
-                        <TableRow key={item.id} hover>
-                            <TableCell>{item.id}</TableCell>
-                            <TableCell>{item.login}</TableCell>
-                            <TableCell>{item.name}</TableCell>
-                            <TableCell>{item.salary}</TableCell>
-                        </TableRow>
-                    )
-                })}
-            </TableBody>
-        )
-    } else {
-        return <Typography align='left' h3>No more items left to fetch</Typography>
-    }
-}
-
 const EmployeeTable = (props) => {
     const classes = useStyles();
+
+    const [rowData, setRowData] = useState({})
+    const [isEditOpen, setEditOpen] = useState(false);
+    const [isDelOpen, setDelOpen] = useState(false);
+
+    const handleEditToggle = (item) => {
+        setEditOpen(!isEditOpen);
+        setRowData({...item});
+        props.setModalOpen(!props.isModalOpen)
+    }
+
+    const handleDeleteToggle = (item) => {
+        setDelOpen(!isDelOpen)
+        setRowData({...item});
+        props.setModalOpen(!props.isModalOpen)
+    }
+
+    const tableContent = (rows) => {
+        if (rows.length !== 0) {
+            return (
+                <TableBody>
+                    {rows.map(item => {
+                        return (
+                            <TableRow key={item.id} hover>
+                                <TableCell align='center'>{item.id}</TableCell>
+                                <TableCell align='center'>{item.login}</TableCell>
+                                <TableCell align='center'>{item.name}</TableCell>
+                                <TableCell align='center'>{item.salary}</TableCell>
+                                <TableCell align='center'>
+                                    <IconButton color='primary' aria-label="edit row" component="span">
+                                        <EditIcon onClick={() => handleEditToggle(item)}/>
+                                    </IconButton>
+                                    <IconButton color='secondary' aria-label="delete row" component="span">
+                                        <DeleteIcon onClick={() => handleDeleteToggle(item)}/>
+                                    </IconButton>
+                                </TableCell>
+                            </TableRow>
+                        )
+                    })}
+                </TableBody>
+            )
+        } else {
+            return <Typography align='left' h3>No more items left to fetch</Typography>
+        }
+    }
 
     return (
         <TableContainer component={Paper}>
@@ -61,6 +94,8 @@ const EmployeeTable = (props) => {
                     </TableRow>
                 </TableHead>
                 {tableContent(props.rows)}
+                <EditModal open={isEditOpen} closeModal={handleEditToggle} content={rowData}/>
+                <DeleteModal open={isDelOpen} closeModal={handleDeleteToggle} content={rowData}/>
             </Table>
         </TableContainer>
     )

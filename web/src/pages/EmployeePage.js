@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const EmployeePage = (props) => {
+const EmployeePage = () => {
     const classes = useStyles();
     const [data, setData] = useState([]);
     const [page, setPage] = useState(0);
@@ -31,6 +31,7 @@ const EmployeePage = (props) => {
         direction: '+',
         value: 'name',
     });
+    const [isModalOpen, setModalOpen] = useState(false);
 
     const pageLimit = 30;
 
@@ -54,7 +55,7 @@ const EmployeePage = (props) => {
 
     useEffect(() => {
         fetchData(page, salary, order);
-    }, []);
+    }, [page, salary, order, isModalOpen]);
 
     const handleSalaryFilter = (event) => {
         const newSalary = {...salary};
@@ -63,7 +64,6 @@ const EmployeePage = (props) => {
         } else {
             newSalary.max = Number(event.target.value);
         }
-        fetchData(page, newSalary, order);
         setSalary(newSalary)
     }
 
@@ -75,22 +75,19 @@ const EmployeePage = (props) => {
             ...order,
             direction: event.target.value
         }
-        fetchData(page, salary, newOrder);
         setOrder({...newOrder});
     }
 
     const handleNextPage = () => {
-        fetchData(page+1, salary, order);
         setPage(page+1);
     }
 
     const handlePrevPage = () => {
-        fetchData(page-1, salary, order);
         setPage(page-1);
     }
 
     return (
-        <Grid className={classes.root} container spacing={2}>
+        <Grid className={classes.root} container spacing={2} alignContent='center'>
             <Grid container xs={3}>
                 <TextField 
                     id="min" 
@@ -150,7 +147,7 @@ const EmployeePage = (props) => {
                 <Button disabled={(data.length === 0) ? true : false} onClick={handleNextPage}>Next Page</Button>
             </Grid>
             <Grid item xs={12}>
-                <EmployeeTable rows={data}/>
+                <EmployeeTable rows={data} isModalOpen={isModalOpen} setModalOpen={setModalOpen}/>
             </Grid>
         </Grid>
     )
