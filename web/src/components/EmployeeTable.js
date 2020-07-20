@@ -30,9 +30,6 @@ const useStyles = makeStyles((theme) => ({
     header: {
         backgroundColor: theme.palette.grey[200],
     }, 
-    cell: {
-        align: 'center',
-    }
 }));
 
 const EmployeeTable = (props) => {
@@ -89,7 +86,7 @@ const EmployeeTable = (props) => {
                 <TableHead>
                     <TableRow className={classes.header}>
                         {columns.map(item => {
-                            return <TableCell key={item.id}>{item.label}</TableCell>
+                            return <TableCell align='center' key={item.id}>{item.label}</TableCell>
                         })}
                     </TableRow>
                 </TableHead>
