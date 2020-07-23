@@ -141,9 +141,8 @@ async function handleUpdateRequest(res, fileData) {
 
     const updateNameSalary = `UPDATE users SET name = $3, salary = $4 WHERE id = $1 AND login = $2`;
     const getLoginConflict = `SELECT id, login FROM users WHERE login = $1`;
-    const updateLogin = `UPDATE users SET login = $2 WHERE id = $1`;
     const getPreviousLogin = `SELECT login FROM users WHERE id = $1`;
-
+    
     const client = await pool.connect();
     try {
         await client.query("BEGIN");
@@ -162,19 +161,24 @@ async function handleUpdateRequest(res, fileData) {
                 const tid = affectedRows[0].id;
                 const tlogin = affectedRows[0].login;
                 const pid = id;
+                
                 if (pid !== tid) {
                     res = await client.query(getPreviousLogin, [pid]);
                     if (res.rows.length === 0) {
                         throw Error(`${pid} is a new entry so login must be unique!`);
                     } else {
                         const plogin = res.rows[0].login;
+                        
                         // swap logins here
-                        // console.log(tid, plogin);
-                        res = await client.query(updateLogin, [tid, `tmp${plogin}`]);
-                        // console.log(pid, tlogin);
-                        res = await client.query(updateLogin, [pid, tlogin]);
-                        // console.log(tid, plogin);
-                        res = await client.query(updateLogin, [tid, plogin]);
+                        const swapLogins = `
+                            UPDATE users SET login = CASE 
+                                WHEN login = '${tlogin}' then '${plogin}'
+                                WHEN login = '${plogin}' then '${tlogin}'
+                            END
+                            WHERE login in ('${tlogin}', '${plogin}')
+                        `;
+
+                        res = await client.query(swapLogins);
                     }
                 }
             } else {
