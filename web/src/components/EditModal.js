@@ -83,6 +83,7 @@ const EditModal = (props) => {
                             id={key}
                             onChange={handleOnChange}
                             fullWidth={true}
+                            defaultValue={rowData[key]}
                             InputProps={{
                                 startAdornment: (
                                     <InputAdornment position="start">
